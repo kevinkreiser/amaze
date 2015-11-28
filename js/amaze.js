@@ -134,10 +134,15 @@ var reset = function () {
     }
   }
 
-  //TODO: pick start and end based on path length
-  
-  start = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
-  end = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
+  //randomly start along the perimeter of the maze and end on the opposite side
+  if(round(Math.random())) {
+    start = [round(Math.random()) * (dimensions - 1), round(Math.random() * (dimensions - 1))];
+    end = [start[0] ? 0 : dimensions - 1, round(Math.random()) * (dimensions - 1)];
+  }
+  else {
+    start = [round(Math.random() * (dimensions - 1)), round(Math.random()) * (dimensions - 1)];
+    end = [round(Math.random()) * (dimensions - 1), start[1] ? 0 : dimensions - 1];
+  }
   path = [];
 
   //(function depth_first_backtrack(x, y){
