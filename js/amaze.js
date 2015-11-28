@@ -3,6 +3,7 @@ var dimensions = 25
 var cells;
 var start;
 var end;
+var path;
 
 function round(value) { return (value + 0.5) | 0; }
 
@@ -38,6 +39,20 @@ var draw = function () {
     });
   });
 
+  //draw the path
+  if(path.length) {
+    context.strokeStyle = '#FFCCCC';
+    context.lineWidth = .2;
+    context.beginPath();
+    context.moveTo(path[0][0] + .5, path[0][1] + .5);
+    path.forEach(function (pt) {
+      context.lineTo(pt[0] + .5, pt[1] + .5);
+    });
+    context.lineTo(start[0] + .5, start[1] + .5);
+    context.stroke();
+    context.closePath();
+  }
+
   //draw the start and end
   context.fillStyle = '#3366CC';
   context.beginPath();
@@ -67,10 +82,6 @@ var reset = function () {
       cells[x].push(0);
   }
 
-  //TODO: pick start and end based on path length
-  start = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
-  end = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
-
   //get the shared walls between a cell and its neighbors
   var getWalls = function(x, y) {
     var walls = [];
@@ -98,6 +109,11 @@ var reset = function () {
     }
   }
 
+  //TODO: pick start and end based on path length
+  start = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
+  end = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
+  path = [];
+
   //(function depth_first_backtrack(x, y){
   //})(0,0);
       
@@ -117,7 +133,11 @@ var onKeyPress = function(e) {
     var next = [start[0] + ((e.keyCode - 38) % 2), start[1] + ((e.keyCode - 39) % 2)];
     var mask = cells[start[0]][start[1]];
     if(mask & keyToNeighbor[e.keyCode]) {
-      start = next;
+      if(path.length && next[0] == path[path.length - 1][0] && next[1] == path[path.length - 1][1])
+        path.pop();
+      else
+        path.push(start);
+      start = next;      
       draw();
     }
   }
