@@ -157,9 +157,10 @@ var onKeyPress = function(e) {
 //move around the maze with finger or mouse
 var onHover = function(e) {
   //touch
-  if(e.changedTouches !== undefined)
-    e.changedTouches.forEach(function (t) { move(t.pageX / pixels * dimensions, t.pageY / pixels * dimensions); });
-  //mouse
+  if(e.changedTouches !== undefined) {
+    for(var i = 0; i < e.changedTouches.length; i++)
+      move((e.changedTouches[i].pageX / pixels * dimensions) | 0, (e.changedTouches[i].pageY / pixels * dimensions) | 0);
+  }//mouse
   else if(e.clientX !== undefined)
     move((e.clientX / pixels * dimensions) | 0, (e.clientY / pixels * dimensions) | 0);
 }
