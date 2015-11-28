@@ -1,5 +1,6 @@
 //a few globals
-var dimensions = 25
+var dimensions = 15
+var pixels;
 var cells;
 var start;
 var end;
@@ -20,12 +21,13 @@ var draw = function () {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   //draw the maze
-  var scale = canvas.width < canvas.height ? canvas.width / dimensions : canvas.height / dimensions;
+  pixels = Math.min(canvas.width, canvas.height); 
+  var scale = pixels / dimensions;
   var line = function(x1, y1, x2, y2) { context.moveTo(x1 + .5, y1 + .5); context.lineTo(x2 + .5, y2 + .5); };
   context.scale(scale,scale);
   context.strokeStyle = 'white';
-  context.lineCap = 'round';
-  context.lineJoin = 'round';
+  context.lineCap = 'square';
+  context.lineJoin = 'miter';
   context.lineWidth = .75;
   cells.forEach(function(column, x) {
     column.forEach(function(row, y) {
@@ -42,6 +44,8 @@ var draw = function () {
   //draw the path
   if(path.length) {
     context.strokeStyle = '#FFCCCC';
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
     context.lineWidth = .2;
     context.beginPath();
     context.moveTo(path[0][0] + .5, path[0][1] + .5);
@@ -126,27 +130,46 @@ var solve = function () {
   //TODO: A*
 };
 
-//move around the maze
-var keyToNeighbor = { 37: 1, 38: 4, 39: 2, 40: 8 };
-var onKeyPress = function(e) {
-  if(e.keyCode > 36 && e.keyCode < 41) {
-    var next = [start[0] + ((e.keyCode - 38) % 2), start[1] + ((e.keyCode - 39) % 2)];
-    var mask = cells[start[0]][start[1]];
-    if(mask & keyToNeighbor[e.keyCode]) {
-      if(path.length && next[0] == path[path.length - 1][0] && next[1] == path[path.length - 1][1])
-        path.pop();
-      else
-        path.push(start);
-      start = next;      
-      draw();
-    }
+//movement in general
+var keyToNeighbor = { '-1': {'0': 1}, '1': {'0': 2}, '0': {'-1': 4, '1': 8} };
+function move(x, y) {
+  //figure out which neighbor
+  var neighbor = 0;
+  try { neighbor = keyToNeighbor[x - start[0]][y -  start[1]]; } catch (e) { }
+  var mask = cells[start[0]][start[1]];
+  //is it a valid move
+  if(mask & neighbor) {
+    if(path.length && x == path[path.length - 1][0] && y == path[path.length - 1][1])
+      path.pop();
+    else
+      path.push(start);
+    start = [x, y];
+    draw();
   }
+}
+
+//move around the maze with arrow keys
+var onKeyPress = function(e) {
+  if(e.keyCode > 36 && e.keyCode < 41)
+    move(start[0] + ((e.keyCode - 38) % 2), start[1] + ((e.keyCode - 39) % 2));
 };
 
+//move around the maze with finger or mouse
+var onHover = function(e) {
+  //touch
+  if(e.changedTouches !== undefined)
+    e.changedTouches.forEach(function (t) { move(t.pageX / pixels * dimensions, t.pageY / pixels * dimensions); });
+  //mouse
+  else if(e.clientX !== undefined)
+    move((e.clientX / pixels * dimensions) | 0, (e.clientY / pixels * dimensions) | 0);
+}
+
 //capture interaction
-window.addEventListener('keypress', onKeyPress);
-//TODO: capture mouse clicks
-//TODO: capture mobile gestures
+var canvas = document.getElementById('maze');
+canvas.addEventListener('keypress', onKeyPress);
+canvas.addEventListener("touchstart", onHover, false);
+canvas.addEventListener("touchmove", onHover, false);
+canvas.addEventListener("mousemove", onHover, false);
 
 //capture screen updates
 window.onload = reset;
