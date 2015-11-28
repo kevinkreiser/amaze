@@ -42,8 +42,8 @@ var draw = function () {
   });
 
   //draw the destination
-  context.fillStyle = '#009933';
-  context.strokeStyle = '#000000';
+  context.fillStyle = '#44bb77';
+  context.strokeStyle = '#006600';
   context.lineJoin = 'miter';
   context.lineWidth = .05;
   (function starPath(x, y, n, or, ir) {
@@ -65,7 +65,7 @@ var draw = function () {
 
   //draw the path
   if(path.length) {
-    context.strokeStyle = '#FFCCCC';
+    context.strokeStyle = '#ffdddd';
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.lineWidth = .2;
@@ -80,8 +80,8 @@ var draw = function () {
   }
 
   //draw the current position
-  context.fillStyle = '#3366CC';
-  context.strokeStyle = '#000000';
+  context.fillStyle = '#6699cc';
+  context.strokeStyle = '#003399';
   context.lineJoin = 'miter';
   context.lineWidth = .05;
   context.beginPath();
@@ -135,6 +135,7 @@ var reset = function () {
   }
 
   //TODO: pick start and end based on path length
+  
   start = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
   end = [round(Math.random() * (dimensions - 1)), round(Math.random() * (dimensions - 1))];
   path = [];
