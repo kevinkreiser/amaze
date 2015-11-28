@@ -1,5 +1,5 @@
 //a few globals
-var dimensions = 15
+var dimensions = 15;
 var pixels;
 var cells;
 var start;
@@ -41,6 +41,28 @@ var draw = function () {
     });
   });
 
+  //draw the destination
+  context.fillStyle = '#009933';
+  context.strokeStyle = '#000000';
+  context.lineJoin = 'miter';
+  context.lineWidth = .05;
+  (function starPath(x, y, n, or, ir) {
+    var rot = -Math.PI / 2;
+    var step = Math.PI / n;
+    context.beginPath();
+    context.moveTo(x, y - or)
+    for (i = 0; i < n; i++) {
+      context.lineTo(x + Math.cos(rot) * or, y + Math.sin(rot) * or);
+      rot += step
+      context.lineTo(x + Math.cos(rot) * ir, y + Math.sin(rot) * ir);
+      rot += step
+    }
+    context.lineTo(x, y - or)
+    context.closePath();  
+  })(end[0] + .5, end[1] + .5, 5, .33, .16);
+  context.stroke();
+  context.fill();
+
   //draw the path
   if(path.length) {
     context.strokeStyle = '#FFCCCC';
@@ -57,16 +79,15 @@ var draw = function () {
     context.closePath();
   }
 
-  //draw the start and end
+  //draw the current position
   context.fillStyle = '#3366CC';
+  context.strokeStyle = '#000000';
+  context.lineJoin = 'miter';
+  context.lineWidth = .05;
   context.beginPath();
   context.arc(start[0] + .5, start[1] + .5, .25, 0, 2 * Math.PI);
   context.closePath();
-  context.fill();
-  context.fillStyle = '#009933';
-  context.beginPath();
-  context.arc(end[0] + .5, end[1] + .5, .25, 0, 2 * Math.PI);
-  context.closePath();
+  context.stroke();
   context.fill();
 
   //did you win
