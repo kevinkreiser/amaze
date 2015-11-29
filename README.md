@@ -5,4 +5,4 @@ There's not much to say, this is a small project I made for my 4 year old who re
 
 I'd like to make a few controls to tweak a few things on the fly but this was good enough to get going.
 
-Give it a try (http://kevinkreiser.github.io/amaze)[http://kevinkreiser.github.io/amaze]
+Give it a try [http://kevinkreiser.github.io/amaze](http://kevinkreiser.github.io/amaze)
